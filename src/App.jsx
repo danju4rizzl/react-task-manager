@@ -5,8 +5,15 @@ import NoTask from "./components/NoTask";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 
+import { useAuth0 } from "@auth0/auth0-react";
+import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
+
 function App() {
 	const [allTasks, setAllTasks] = useState([]);
+	const { user, isAuthenticated, isLoading } = useAuth0();
+
+	console.log(isAuthenticated);
 
 	const getLocalData = () => JSON.parse(localStorage.getItem("storedTask"));
 
@@ -47,19 +54,28 @@ function App() {
 	}, [allTasks]);
 
 	return (
-		<div className="bg-slate-900 text-white h-screen px-10 lg:px-44 grid grid-flow-row content-center gap-y-10">
-			<div className="mx-auto">
+		<div className="bg-slate-900 text-white h-screen ">
+			<nav className="flex justify-end items-center p-5">
+				{user && <p>@{user.nickname}</p>}
+				{isAuthenticated ? <LogoutButton /> : <LoginButton />}
+			</nav>
+			<div className="px-10 lg:px-44 grid grid-flow-row content-center">
 				<Heading
 					title={"Task Manager"}
 					subTitle="A simple way to manage your tasks, anywhere"
 				/>
-				<TaskForm onAddTask={addNewTask} />
-			</div>
-			<div className="lg:mx-20">
-				{allTasks.length > 0 ? (
-					<TaskList displayedTasks={allTasks} whenDelete={deleteTask} />
+
+				{isAuthenticated ? (
+					<div className="mx-auto">
+						<TaskForm onAddTask={addNewTask} />
+						{allTasks.length > 0 ? (
+							<TaskList displayedTasks={allTasks} whenDelete={deleteTask} />
+						) : (
+							<NoTask />
+						)}
+					</div>
 				) : (
-					<NoTask />
+					<Heading title={"Please click Login ☝️"} />
 				)}
 			</div>
 		</div>
