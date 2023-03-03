@@ -53,6 +53,10 @@ function App() {
 		}
 	}, [allTasks]);
 
+	if (isLoading) {
+		return <Heading title={"Loading..."} />;
+	}
+
 	return (
 		<div className="bg-slate-900 text-white h-screen ">
 			<nav className="flex justify-end items-center p-5">
@@ -66,7 +70,7 @@ function App() {
 				/>
 
 				{isAuthenticated ? (
-					<div className="mx-auto">
+					<div className="mx-auto space-y-5">
 						<TaskForm onAddTask={addNewTask} />
 						{allTasks.length > 0 ? (
 							<TaskList displayedTasks={allTasks} whenDelete={deleteTask} />
